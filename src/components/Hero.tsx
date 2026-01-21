@@ -140,10 +140,10 @@ export function Hero() {
                 Benefits
               </a>
               <a 
-                href="#stats" 
+                href="#demo" 
                 className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
-                Statistics
+                Demo
               </a>
               <a 
                 href="#contact" 
@@ -236,11 +236,11 @@ export function Hero() {
                 Benefits
               </a>
               <a 
-                href="#stats" 
+                href="#demo" 
                 className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Statistics
+                Demo
               </a>
               <a 
                 href="#contact" 
