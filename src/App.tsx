@@ -3,6 +3,7 @@ import { Portfolio } from './components/Portfolio'
 import { About } from './components/About'
 import { Services } from './components/Services'
 import { Awards } from './components/Awards'
+import { LiveDemo } from './components/LiveDemo'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 
@@ -24,6 +25,9 @@ export default function App() {
         </section>
         <section id="stats" aria-label="Statistics section">
           <Awards />
+        </section>
+        <section id="demo" aria-label="Live demo section">
+          <LiveDemo />
         </section>
         <section id="contact" aria-label="Contact section">
           <Contact />
