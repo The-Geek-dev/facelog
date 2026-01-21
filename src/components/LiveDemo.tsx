@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Camera, CameraOff, UserCheck, Scan, AlertCircle, RefreshCw, Settings } from 'lucide-react'
+import { Camera, CameraOff, UserCheck, Scan, AlertCircle, RefreshCw, Settings, ChevronDown, Download } from 'lucide-react'
 import { Button } from './ui/button'
 import { recognizeFace, checkBackendConnection, canvasToBase64 } from '@/lib/api'
 
@@ -24,6 +24,7 @@ export function LiveDemo() {
   const [scanProgress, setScanProgress] = useState(0)
   const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null)
   const [classSection, setClassSection] = useState('Default')
+  const [showClassSelector, setShowClassSelector] = useState(false)
   const streamRef = useRef<MediaStream | null>(null)
   const animationRef = useRef<number | null>(null)
   const scanIntervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -127,10 +128,13 @@ export function LiveDemo() {
       }
     } catch (err: any) {
       console.error('Recognition error:', err)
-      // Show specific error if it's not the expected "not recognized" error
+      // Show specific error messages
       if (err.message?.includes('No face detected')) {
         setError('No face detected. Please face the camera directly with good lighting.')
         setTimeout(() => setError(null), 3000)
+      } else if (err.message?.includes('No students registered')) {
+        setError(`No students registered in "${classSection}" class. Please register students first or select a different class.`)
+        setTimeout(() => setError(null), 5000)
       } else if (!err.message?.includes('not recognized')) {
         setError(err.message || 'Recognition failed')
         setTimeout(() => setError(null), 3000)
@@ -283,6 +287,45 @@ export function LiveDemo() {
     }
   }, [])
 
+  // Export attendance to CSV
+  const exportToCSV = () => {
+    if (detectedStudents.length === 0) {
+      setError('No attendance records to export')
+      setTimeout(() => setError(null), 3000)
+      return
+    }
+
+    // Prepare CSV content
+    const headers = ['Student ID', 'Name', 'Confidence (%)', 'Time', 'Date', 'Class Section']
+    const rows = detectedStudents.map(student => [
+      student.student_id,
+      student.name,
+      student.confidence.toFixed(1),
+      student.timestamp.toLocaleTimeString(),
+      student.timestamp.toLocaleDateString(),
+      classSection
+    ])
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n')
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    
+    link.setAttribute('href', url)
+    link.setAttribute('download', `attendance_${classSection}_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
   return (
     <section id="demo" className="relative py-24 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       {/* Background Effects */}
@@ -330,6 +373,41 @@ export function LiveDemo() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    {/* Class Selector - Show when camera is off */}
+                    {!isStreaming && (
+                      <div className="relative">
+                        <Button
+                          onClick={() => setShowClassSelector(!showClassSelector)}
+                          variant="outline"
+                          size="sm"
+                          className="border-white/20 text-white hover:bg-white/10"
+                        >
+                          <Settings className="w-4 h-4 mr-2" />
+                          {classSection}
+                          <ChevronDown className="w-4 h-4 ml-2" />
+                        </Button>
+                        
+                        {showClassSelector && (
+                          <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-white/20 rounded-lg shadow-xl z-50">
+                            {['Default', 'Class A', 'Class B', 'Class C'].map((section) => (
+                              <button
+                                key={section}
+                                onClick={() => {
+                                  setClassSection(section)
+                                  setShowClassSelector(false)
+                                }}
+                                className={`w-full px-4 py-2 text-left hover:bg-white/10 first:rounded-t-lg last:rounded-b-lg ${
+                                  classSection === section ? 'bg-accent-blue/20 text-accent-blue' : 'text-white'
+                                }`}
+                              >
+                                {section}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     {isStreaming && (
                       <>
                         {!isScanning ? (
@@ -360,16 +438,15 @@ export function LiveDemo() {
                 <div className="relative aspect-video bg-slate-900 flex items-center justify-center">
                   {error && (
                     <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90 z-30 pointer-events-auto">
-                      <div className="text-center p-6">
+                      <div className="text-center p-6 max-w-md">
                         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
                         <p className="text-white/70 mb-4">{error}</p>
                         <Button 
-                          onClick={startCamera} 
+                          onClick={() => setError(null)} 
                           variant="outline" 
                           className="border-white/20 text-white hover:bg-white/10 cursor-pointer"
                         >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Try Again
+                          Dismiss
                         </Button>
                       </div>
                     </div>
@@ -381,7 +458,8 @@ export function LiveDemo() {
                         <div className="w-24 h-24 rounded-full bg-white/5 border border-white/20 flex items-center justify-center mx-auto mb-6">
                           <Camera className="w-10 h-10 text-white/50" />
                         </div>
-                        <p className="text-white/60 mb-6">Click below to start the camera</p>
+                        <p className="text-white/60 mb-2">Selected Class: <span className="text-accent-blue font-semibold">{classSection}</span></p>
+                        <p className="text-white/40 text-sm mb-6">Change class section using the button above</p>
                         <Button 
                           onClick={startCamera} 
                           className="bg-accent-blue hover:bg-accent-blue/90 text-white px-8 py-3 cursor-pointer relative z-20"
@@ -410,7 +488,7 @@ export function LiveDemo() {
                   {isScanning && scanProgress < 100 && backendAvailable !== false && (
                     <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-white/80">Analyzing face...</span>
+                        <span className="text-sm text-white/80">Analyzing face in {classSection}...</span>
                         <span className="text-sm font-mono text-accent-blue">{scanProgress}%</span>
                       </div>
                       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
@@ -441,7 +519,7 @@ export function LiveDemo() {
                 {isStreaming && (
                   <div className="flex items-center justify-between px-6 py-4 border-t border-white/10">
                     <div className="text-sm text-white/60">
-                      {backendAvailable === false ? 'Demo Mode • No real recognition' : 'Live Mode • Real-time recognition'}
+                      {backendAvailable === false ? 'Demo Mode • No real recognition' : `Scanning ${classSection} • Real-time recognition`}
                     </div>
                     <Button
                       onClick={stopCamera}
@@ -466,7 +544,7 @@ export function LiveDemo() {
                     <h3 className="font-bold text-white">Attendance Log</h3>
                   </div>
                   <p className="text-sm text-white/50 mt-1">
-                    {detectedStudents.length} student{detectedStudents.length !== 1 ? 's' : ''} marked present
+                    {detectedStudents.length} student{detectedStudents.length !== 1 ? 's' : ''} in {classSection}
                   </p>
                 </div>
 
@@ -479,7 +557,7 @@ export function LiveDemo() {
                         <p className="text-xs mt-1">
                           {backendAvailable === false 
                             ? 'Connect backend to start recognition' 
-                            : 'Start scanning to mark attendance'}
+                            : `Start scanning to mark attendance for ${classSection}`}
                         </p>
                       </div>
                     ) : (
@@ -513,7 +591,15 @@ export function LiveDemo() {
                 </div>
 
                 {detectedStudents.length > 0 && (
-                  <div className="px-4 py-4 border-t border-white/10">
+                  <div className="px-4 py-4 border-t border-white/10 space-y-2">
+                    <Button
+                      onClick={exportToCSV}
+                      className="w-full bg-accent-emerald hover:bg-accent-emerald/90 text-white"
+                      size="sm"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Export to CSV
+                    </Button>
                     <Button
                       onClick={() => setDetectedStudents([])}
                       variant="outline"
@@ -535,7 +621,7 @@ export function LiveDemo() {
               <span className="text-sm text-white/70">
                 {backendAvailable === false 
                   ? 'Run "python app.py" to enable real facial recognition with DeepFace AI'
-                  : 'Connected to Flask backend • Real-time recognition active'}
+                  : `Connected to Flask backend • Scanning ${classSection} • Real-time recognition active`}
               </span>
             </div>
           </div>

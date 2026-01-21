@@ -217,7 +217,7 @@ export function StudentRegistration() {
                   {/* Video Container */}
                   <div className="relative aspect-[4/3] bg-slate-900 rounded-xl overflow-hidden mb-4">
                     {!isStreaming && !capturedImage && (
-                      <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="absolute inset-0 flex items-center justify-center z-10">
                         <div className="text-center p-6">
                           <div className="w-20 h-20 rounded-full bg-white/5 border border-white/20 flex items-center justify-center mx-auto mb-4">
                             <Camera className="w-8 h-8 text-white/50" />
