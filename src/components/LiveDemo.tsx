@@ -94,8 +94,8 @@ export function LiveDemo() {
     // Draw video frame to canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
 
-    // Convert to base64
-    const imageBase64 = canvasToBase64(canvas)
+    // Convert to base64 with higher quality
+    const imageBase64 = canvas.toDataURL('image/jpeg', 0.95)
 
     try {
       // Call backend API
@@ -127,9 +127,13 @@ export function LiveDemo() {
       }
     } catch (err: any) {
       console.error('Recognition error:', err)
-      // Don't show error for "Face not recognized" as it's expected
-      if (!err.message?.includes('not recognized')) {
+      // Show specific error if it's not the expected "not recognized" error
+      if (err.message?.includes('No face detected')) {
+        setError('No face detected. Please face the camera directly with good lighting.')
+        setTimeout(() => setError(null), 3000)
+      } else if (!err.message?.includes('not recognized')) {
         setError(err.message || 'Recognition failed')
+        setTimeout(() => setError(null), 3000)
       }
     }
   }
@@ -355,11 +359,15 @@ export function LiveDemo() {
                 {/* Video Container */}
                 <div className="relative aspect-video bg-slate-900 flex items-center justify-center">
                   {error && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90 z-20">
+                    <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90 z-30 pointer-events-auto">
                       <div className="text-center p-6">
                         <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
                         <p className="text-white/70 mb-4">{error}</p>
-                        <Button onClick={startCamera} variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                        <Button 
+                          onClick={startCamera} 
+                          variant="outline" 
+                          className="border-white/20 text-white hover:bg-white/10 cursor-pointer"
+                        >
                           <RefreshCw className="w-4 h-4 mr-2" />
                           Try Again
                         </Button>
@@ -368,18 +376,20 @@ export function LiveDemo() {
                   )}
 
                   {!isStreaming && !error && (
-                    <div className="text-center p-8">
-                      <div className="w-24 h-24 rounded-full bg-white/5 border border-white/20 flex items-center justify-center mx-auto mb-6">
-                        <Camera className="w-10 h-10 text-white/50" />
+                    <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-900">
+                      <div className="text-center p-8">
+                        <div className="w-24 h-24 rounded-full bg-white/5 border border-white/20 flex items-center justify-center mx-auto mb-6">
+                          <Camera className="w-10 h-10 text-white/50" />
+                        </div>
+                        <p className="text-white/60 mb-6">Click below to start the camera</p>
+                        <Button 
+                          onClick={startCamera} 
+                          className="bg-accent-blue hover:bg-accent-blue/90 text-white px-8 py-3 cursor-pointer relative z-20"
+                        >
+                          <Camera className="w-5 h-5 mr-2" />
+                          Start Camera
+                        </Button>
                       </div>
-                      <p className="text-white/60 mb-6">Click below to start the camera</p>
-                      <Button 
-                        onClick={startCamera} 
-                        className="bg-accent-blue hover:bg-accent-blue/90 text-white px-8 py-3"
-                      >
-                        <Camera className="w-5 h-5 mr-2" />
-                        Start Camera
-                      </Button>
                     </div>
                   )}
 
@@ -388,12 +398,12 @@ export function LiveDemo() {
                     autoPlay
                     playsInline
                     muted
-                    className={`absolute inset-0 w-full h-full object-cover ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${isStreaming ? 'opacity-100 z-0' : 'opacity-0'}`}
                   />
                   
                   <canvas
                     ref={canvasRef}
-                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
+                    className={`absolute inset-0 w-full h-full object-cover pointer-events-none ${isStreaming ? 'opacity-100 z-5' : 'opacity-0'}`}
                   />
 
                   {/* Scanning Overlay */}
