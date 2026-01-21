@@ -1,150 +1,139 @@
 'use client'
 
-import { useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, MessageSquare, Github, FileText } from 'lucide-react'
 
 export function Contact() {
-
-  useEffect(() => {
-    // Load Cal.com embed script
-    const script = document.createElement('script')
-    script.type = 'text/javascript'
-    script.innerHTML = `
-      (function (C, A, L) { 
-        let p = function (a, ar) { a.q.push(ar); }; 
-        let d = C.document; 
-        C.Cal = C.Cal || function () { 
-          let cal = C.Cal; 
-          let ar = arguments; 
-          if (!cal.loaded) { 
-            cal.ns = {}; 
-            cal.q = cal.q || []; 
-            d.head.appendChild(d.createElement("script")).src = A; 
-            cal.loaded = true; 
-          } 
-          if (ar[0] === L) { 
-            const api = function () { p(api, arguments); }; 
-            const namespace = ar[1]; 
-            api.q = api.q || []; 
-            if(typeof namespace === "string"){
-              cal.ns[namespace] = cal.ns[namespace] || api;
-              p(cal.ns[namespace], ar);
-              p(cal, ["initNamespace", namespace]);
-            } else p(cal, ar); 
-            return;
-          } 
-          p(cal, ar); 
-        }; 
-      })(window, "https://app.cal.com/embed/embed.js", "init");
-      
-      Cal("init", "mojju-discovery-call", {origin:"https://app.cal.com"});
-      
-      Cal.ns["mojju-discovery-call"]("inline", {
-        elementOrSelector:"#my-cal-inline-mojju-discovery-call",
-        config: {"layout":"month_view"},
-        calLink: "mojli/30min",
-      });
-      
-      Cal.ns["mojju-discovery-call"]("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-    `
-    
-    document.body.appendChild(script)
-    
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
-    }
-  }, [])
-
   return (
-    <section id="contact" className="relative py-32 bg-card/30">
+    <section id="contact" className="relative py-24 bg-card/30">
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-3 mb-6">
             <div className="w-3 h-3 bg-accent-emerald rounded-full animate-pulse" />
             <span className="text-sm font-semibold text-muted-foreground">
-              Let's Create Together
+              Get In Touch
             </span>
             <div className="w-3 h-3 bg-accent-blue rounded-full animate-pulse" />
           </div>
           
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-8">
-            <span className="block mb-2">Ready to Light Up the Screen?</span>
-            
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6 text-foreground">
+            Ready to Get Started?
           </h2>
           
-          <p className="text-2xl lg:text-3xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Book a discovery call to discuss your project and see how we can bring your vision to cinematic reality
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Contact us for a demo or to learn more about implementing FACELOG at your institution
           </p>
         </div>
 
-        {/* Cal.com Booking Widget */}
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-background clean-border rounded-3xl overflow-hidden elevated-shadow">
-            {/* Widget Header */}
-            <div className="bg-card/50 px-8 py-6 border-b border-border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-black text-foreground mb-1">
-                    MOJJU Discovery Call
-                  </h3>
-                  <p className="text-muted-foreground">
-                    30 minutes • Video call • Free consultation
-                  </p>
+        {/* Contact Options */}
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {/* Email Card */}
+            <motion.a
+              href="mailto:contact@facelog.io"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group"
+            >
+              <div className="bg-card clean-border rounded-2xl p-8 hover:shadow-lg gentle-animation hover:-translate-y-1 h-full">
+                <div className="w-14 h-14 rounded-xl bg-accent-blue/10 flex items-center justify-center mb-5">
+                  <Mail className="w-7 h-7 text-accent-blue" />
                 </div>
-                <div className="hidden sm:flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-accent-emerald rounded-full" />
-                  <span className="text-sm text-muted-foreground font-medium">Available now</span>
+                <h3 className="text-xl font-bold text-foreground mb-2">Email Us</h3>
+                <p className="text-muted-foreground mb-4">Get in touch for demos, pricing, and support</p>
+                <span className="text-accent-blue font-semibold group-hover:underline">contact@facelog.io</span>
+              </div>
+            </motion.a>
+
+            {/* Documentation Card */}
+            <motion.a
+              href="#"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="group"
+            >
+              <div className="bg-card clean-border rounded-2xl p-8 hover:shadow-lg gentle-animation hover:-translate-y-1 h-full">
+                <div className="w-14 h-14 rounded-xl bg-accent-emerald/10 flex items-center justify-center mb-5">
+                  <FileText className="w-7 h-7 text-accent-emerald" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Documentation</h3>
+                <p className="text-muted-foreground mb-4">Read the API docs and integration guides</p>
+                <span className="text-accent-emerald font-semibold group-hover:underline">View Docs →</span>
+              </div>
+            </motion.a>
+          </div>
+
+          {/* CTA Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-gradient-to-br from-accent-blue via-accent-purple to-accent-emerald p-0.5 rounded-3xl"
+          >
+            <div className="bg-card rounded-3xl p-8 lg:p-12">
+              <div className="text-center">
+                <h3 className="text-2xl lg:text-3xl font-black text-foreground mb-4">
+                  Schedule a Live Demo
+                </h3>
+                <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+                  See FACELOG in action with a personalized walkthrough. Our team will show you how facial recognition attendance can transform your institution.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-accent-blue text-white font-semibold px-8 py-4 rounded-xl hover:bg-accent-blue/90 gentle-animation cursor-pointer shadow-lg shadow-accent-blue/25"
+                  >
+                    Request Demo
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-secondary text-secondary-foreground font-semibold px-8 py-4 rounded-xl hover:bg-secondary/80 gentle-animation cursor-pointer"
+                  >
+                    Download Brochure
+                  </motion.button>
                 </div>
               </div>
             </div>
-            
-            {/* Cal.com Embed Container */}
-            <div className="p-0 bg-white">
-              <div 
-                style={{
-                  width: '100%',
-                  height: '600px',
-                  overflow: 'scroll'
-                }} 
-                id="my-cal-inline-mojju-discovery-call"
-              />
-            </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Info */}
-        <div className="text-center mt-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="bg-background clean-border rounded-2xl p-6 subtle-shadow">
+        <div className="text-center mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-card clean-border rounded-2xl p-6">
               <div className="w-12 h-12 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-accent-blue rounded-full" />
+                <MessageSquare className="w-6 h-6 text-accent-blue" />
               </div>
-              <h4 className="font-black text-foreground mb-2">Project Discussion</h4>
+              <h4 className="font-bold text-foreground mb-2">24/7 Support</h4>
               <p className="text-muted-foreground text-sm">
-                Share your vision and requirements with our team
+                Our support team is always ready to help
               </p>
             </div>
             
-            <div className="bg-background clean-border rounded-2xl p-6 subtle-shadow">
+            <div className="bg-card clean-border rounded-2xl p-6">
               <div className="w-12 h-12 bg-accent-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-accent-emerald rounded-full" />
+                <Github className="w-6 h-6 text-accent-emerald" />
               </div>
-              <h4 className="font-black text-foreground mb-2">Custom Strategy</h4>
+              <h4 className="font-bold text-foreground mb-2">Open Source</h4>
               <p className="text-muted-foreground text-sm">
-                Get a tailored approach for your unique project
+                Contribute and customize on GitHub
               </p>
             </div>
             
-            <div className="bg-background clean-border rounded-2xl p-6 subtle-shadow">
+            <div className="bg-card clean-border rounded-2xl p-6">
               <div className="w-12 h-12 bg-accent-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <div className="w-6 h-6 bg-accent-purple rounded-full" />
+                <FileText className="w-6 h-6 text-accent-purple" />
               </div>
-              <h4 className="font-black text-foreground mb-2">Next Steps</h4>
+              <h4 className="font-bold text-foreground mb-2">Free Trial</h4>
               <p className="text-muted-foreground text-sm">
-                Clear timeline and roadmap to bring your idea to life
+                Try FACELOG free for 30 days
               </p>
             </div>
           </div>

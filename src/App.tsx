@@ -1,9 +1,8 @@
 import { Hero } from './components/Hero'
 import { Portfolio } from './components/Portfolio'
-import { Awards } from './components/Awards'
 import { About } from './components/About'
 import { Services } from './components/Services'
-import { Team } from './components/Team'
+import { Awards } from './components/Awards'
 import { Contact } from './components/Contact'
 import { Footer } from './components/Footer'
 
@@ -14,20 +13,17 @@ export default function App() {
         <section id="hero" aria-label="Hero section">
           <Hero />
         </section>
-        <section id="portfolio" aria-label="Portfolio section">
+        <section id="features" aria-label="Features section">
           <Portfolio />
         </section>
-        <section id="awards" aria-label="Awards section">
-          <Awards />
-        </section>
-        <section id="about" aria-label="About section">
+        <section id="how-it-works" aria-label="How it works section">
           <About />
         </section>
-        <section id="services" aria-label="Services section">
+        <section id="benefits" aria-label="Benefits section">
           <Services />
         </section>
-        <section id="team" aria-label="Team section" style={{ overflow: 'visible', height: 'auto', minHeight: '0', maxHeight: 'none' }}>
-          <Team />
+        <section id="stats" aria-label="Statistics section">
+          <Awards />
         </section>
         <section id="contact" aria-label="Contact section">
           <Contact />

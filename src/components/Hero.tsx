@@ -1,67 +1,23 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Volume2, VolumeX, Menu, X } from 'lucide-react'
-import { useState, useRef, useEffect } from 'react'
+import { Menu, X, Scan, Shield, Users } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 export function Hero() {
-  const [isMuted, setIsMuted] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY
-      setIsScrolled(scrollTop > 50) // Show background after 50px scroll
+      setIsScrolled(scrollTop > 50)
     }
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  // Ensure video is muted immediately on load to prevent any audio
-  useEffect(() => {
-    if (videoRef.current) {
-      console.log('Video element found, setting up...')
-      videoRef.current.volume = 0
-      videoRef.current.muted = true
-      videoRef.current.defaultMuted = true
-      
-      // Add event listeners for debugging
-      videoRef.current.addEventListener('loadstart', () => console.log('Video: loadstart'))
-      videoRef.current.addEventListener('loadedmetadata', () => console.log('Video: loadedmetadata'))
-      videoRef.current.addEventListener('canplay', () => console.log('Video: canplay'))
-      videoRef.current.addEventListener('playing', () => console.log('Video: playing'))
-      videoRef.current.addEventListener('error', (e) => console.error('Video error:', e))
-      
-      // Force mute on play
-      videoRef.current.addEventListener('play', () => {
-        if (videoRef.current) {
-          console.log('Video play event fired')
-          videoRef.current.muted = isMuted
-          videoRef.current.volume = isMuted ? 0 : 0.7
-        }
-      })
-      
-      // Try to play the video
-      const playPromise = videoRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => console.log('Video autoplay successful'))
-          .catch(error => console.error('Video autoplay failed:', error))
-      }
-    }
-  }, [])
-
-  // Update video mute state when isMuted changes
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = isMuted
-      videoRef.current.volume = isMuted ? 0 : 0.7
-    }
-  }, [isMuted])
 
   // Handle body scroll lock when mobile menu is open
   useEffect(() => {
@@ -71,7 +27,6 @@ export function Hero() {
       document.body.style.overflow = 'unset'
     }
 
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -94,22 +49,48 @@ export function Hero() {
     }
   }, [isMobileMenuOpen])
 
-
-
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-black">
-      {/* MASSIVE VIDEO - Takes up 95% of space */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover scale-110"
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source src="https://mojli.s3.us-east-2.amazonaws.com/Mojli+Website+upscaled+(12mb).webm" type="video/webm" />
-        Your browser does not support the video tag.
-      </video>
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 60%)
+          `
+        }} />
+      </div>
+      
+      {/* Floating Grid Pattern */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: `linear-gradient(rgba(14, 165, 233, 0.3) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(14, 165, 233, 0.3) 1px, transparent 1px)`,
+        backgroundSize: '50px 50px'
+      }} />
+
+      {/* Face Scan Animation Effect */}
+      <div className="absolute top-1/4 right-10 lg:right-20 w-64 h-64 lg:w-96 lg:h-96 opacity-30">
+        <div className="relative w-full h-full">
+          {/* Scanning circle */}
+          <div className="absolute inset-0 border-2 border-accent-blue rounded-full animate-pulse" />
+          <div className="absolute inset-4 border border-accent-blue/50 rounded-full" />
+          <div className="absolute inset-8 border border-accent-blue/30 rounded-full" />
+          
+          {/* Scanning line */}
+          <motion.div
+            className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent-blue to-transparent"
+            animate={{ top: ['10%', '90%', '10%'] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+          />
+          
+          {/* Corner markers */}
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-accent-blue" />
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-accent-blue" />
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-accent-blue" />
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-accent-blue" />
+        </div>
+      </div>
 
       {/* Full-Width Navbar */}
       <motion.nav
@@ -121,7 +102,7 @@ export function Hero() {
         <div 
           className={`w-full px-6 sm:px-8 lg:px-12 py-4 transition-all duration-300 ease-out ${
             isScrolled 
-              ? 'bg-black/80 backdrop-blur-xl border-b border-white/10' 
+              ? 'bg-slate-900/90 backdrop-blur-xl border-b border-white/10' 
               : 'bg-transparent'
           }`}
         >
@@ -129,68 +110,51 @@ export function Hero() {
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="flex items-center cursor-pointer"
+              className="flex items-center cursor-pointer gap-2"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
             >
-              <span className="font-bagel text-white text-xl tracking-wider">MOJJU</span>
+              <Scan className="w-8 h-8 text-accent-blue" />
+              <span className="font-bold text-white text-xl tracking-wider">FACELOG</span>
             </motion.div>
 
             {/* Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
               <a 
-                href="#portfolio" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
+                href="#features" 
+                className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
-                Work
+                Features
               </a>
               <a 
-                href="#about" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
+                href="#how-it-works" 
+                className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
-                Process
+                How It Works
               </a>
               <a 
-                href="#services" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
+                href="#benefits" 
+                className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
-                Capabilities
+                Benefits
               </a>
               <a 
-                href="#team" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
+                href="#stats" 
+                className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
-                Team
+                Statistics
               </a>
               <a 
                 href="#contact" 
-                className="text-white hover:text-white/80 font-medium gentle-animation hover:scale-105"
+                className="text-white/80 hover:text-white font-medium gentle-animation hover:scale-105"
               >
                 Contact
               </a>
             </div>
 
-            {/* Right Side - Video Controls + CTA + Mobile Menu */}
+            {/* Right Side - CTA + Mobile Menu */}
             <div className="flex items-center space-x-3 relative">
-              {/* Video Controls with Sound On indicator */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="glass-effect p-3 rounded-full text-white hover:bg-white/20 gentle-animation cursor-pointer"
-                >
-                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-                
-                {/* Sound On indicator - only show when muted */}
-                {isMuted && (
-                  <div className="absolute -bottom-10 right-0 flex items-center text-white/80">
-                    <span className="whitespace-nowrap font-medium text-sm mr-2">Sound On</span>
-                    <span className="text-lg">↗</span>
-                  </div>
-                )}
-              </div>
-              
               {/* CTA Button - Hidden on mobile */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -199,9 +163,9 @@ export function Hero() {
                   const contactSection = document.getElementById('contact')
                   contactSection?.scrollIntoView({ behavior: 'smooth' })
                 }}
-                className="hidden sm:block bg-red-600 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-md hover:bg-red-700 gentle-animation ml-4 cursor-pointer"
+                className="hidden sm:block bg-accent-blue backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-lg hover:bg-accent-blue/90 gentle-animation cursor-pointer"
               >
-                Book a Call
+                Get Started
               </motion.button>
 
               {/* Mobile Hamburger Menu Button */}
@@ -233,7 +197,7 @@ export function Hero() {
         initial={{ x: '100%' }}
         animate={{ x: isMobileMenuOpen ? '0%' : '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="md:hidden fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-black/90 backdrop-blur-xl border-l border-white/10 z-[90] mobile-menu-panel pointer-events-auto"
+        className="md:hidden fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-slate-900/95 backdrop-blur-xl border-l border-white/10 z-[90] mobile-menu-panel pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-col h-full">
@@ -251,32 +215,32 @@ export function Hero() {
             {/* Mobile Navigation Links */}
             <div className="flex flex-col space-y-4 text-white">
               <a 
-                href="#portfolio" 
+                href="#features" 
                 className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Work
+                Features
               </a>
               <a 
-                href="#about" 
+                href="#how-it-works" 
                 className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Process
+                How It Works
               </a>
               <a 
-                href="#services" 
+                href="#benefits" 
                 className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Capabilities
+                Benefits
               </a>
               <a 
-                href="#team" 
+                href="#stats" 
                 className="mobile-menu-link px-4 py-3 hover:text-white/80 hover:bg-white/10 rounded-lg gentle-animation font-medium text-lg active:bg-white/20"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Team
+                Statistics
               </a>
               <a 
                 href="#contact" 
@@ -296,33 +260,99 @@ export function Hero() {
                 contactSection?.scrollIntoView({ behavior: 'smooth' })
                 setIsMobileMenuOpen(false)
               }}
-              className="bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 active:bg-red-800 gentle-animation mt-8 cursor-pointer"
+              className="bg-accent-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-accent-blue/90 active:bg-accent-blue/80 gentle-animation mt-8 cursor-pointer"
             >
-              Book a Call
+              Get Started
             </motion.button>
           </div>
         </div>
       </motion.div>
 
+      {/* Hero Content */}
+      <div className="relative z-10 container mx-auto px-6 sm:px-8 lg:px-12 pt-32 pb-20 min-h-screen flex flex-col justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="max-w-4xl"
+        >
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-accent-blue/20 border border-accent-blue/30 rounded-full px-4 py-2 mb-8">
+            <div className="w-2 h-2 bg-accent-emerald rounded-full animate-pulse" />
+            <span className="text-sm font-medium text-accent-blue">AI-Powered Attendance System</span>
+          </div>
 
-
-      {/* Big Studio Title - Lower Left */}
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1, delay: 1.5 }}
-        className="absolute bottom-12 left-6 sm:left-8 lg:left-12 z-40"
-      >
-        <div className="max-w-2xl">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight text-white">
-            <span className="block">AI FILM</span>
-            <span className="block">PRODUCTION</span>
-            <span className="block">WITHOUT LIMITS</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight text-white mb-6">
+            <span className="block">Student Attendance</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-accent-blue via-accent-purple to-accent-emerald">
+              Facial Recognition
+            </span>
           </h1>
-        </div>
+          
+          <p className="text-xl lg:text-2xl text-white/70 max-w-2xl mb-10 leading-relaxed">
+            Revolutionize your classroom attendance with AI-powered facial recognition. 
+            Fast, accurate, and completely touchless.
+          </p>
+
+          {/* Feature highlights */}
+          <div className="flex flex-wrap gap-6 mb-10">
+            <div className="flex items-center gap-2 text-white/80">
+              <Scan className="w-5 h-5 text-accent-blue" />
+              <span>Instant Recognition</span>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <Shield className="w-5 h-5 text-accent-emerald" />
+              <span>Secure & Private</span>
+            </div>
+            <div className="flex items-center gap-2 text-white/80">
+              <Users className="w-5 h-5 text-accent-purple" />
+              <span>Multi-Class Support</span>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-wrap gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                const featuresSection = document.getElementById('features')
+                featuresSection?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="bg-accent-blue text-white font-semibold px-8 py-4 rounded-xl hover:bg-accent-blue/90 gentle-animation cursor-pointer shadow-lg shadow-accent-blue/25"
+            >
+              Explore Features
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                const contactSection = document.getElementById('contact')
+                contactSection?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold px-8 py-4 rounded-xl hover:bg-white/20 gentle-animation cursor-pointer"
+            >
+              Request Demo
+            </motion.button>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2"
+        >
+          <div className="w-1 h-2 bg-white/50 rounded-full" />
+        </motion.div>
       </motion.div>
-
-
     </div>
   )
 }

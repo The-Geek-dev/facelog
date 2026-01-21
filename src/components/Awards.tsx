@@ -1,119 +1,126 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import minimalBestFilm from '../assets/minimal-best-film.png'
-import minimalAudienceChoice from '../assets/minimal-audience-choice.png'
-import minimalInnovation from '../assets/minimal-innovation.png'
-import minimalDirectorsChoice from '../assets/minimal-directors-choice.png'
-import minimalExcellence from '../assets/minimal-excellence.png'
-import minimalRisingTalent from '../assets/minimal-rising-talent.png'
+import { motion } from 'framer-motion'
+import { Users, Clock, School, CheckCircle } from 'lucide-react'
 
 export function Awards() {
-  const awards = [
+  const stats = [
     {
-      image: minimalBestFilm,
-      delay: "0s"
+      icon: Users,
+      value: "10,000+",
+      label: "Students Registered",
+      description: "Faces enrolled and tracked across institutions",
+      color: "accent-blue"
     },
     {
-      image: minimalAudienceChoice,
-      delay: "0.5s"
+      icon: CheckCircle,
+      value: "500,000+",
+      label: "Attendances Marked",
+      description: "Successful face recognition check-ins",
+      color: "accent-emerald"
     },
     {
-      image: minimalInnovation,
-      delay: "1s"
+      icon: Clock,
+      value: "< 0.5s",
+      label: "Recognition Speed",
+      description: "Average time to identify a student",
+      color: "accent-purple"
     },
     {
-      image: minimalDirectorsChoice,
-      delay: "1.5s"
-    },
-    {
-      image: minimalExcellence,
-      delay: "2s"
-    },
-    {
-      image: minimalRisingTalent,
-      delay: "2.5s"
+      icon: School,
+      value: "50+",
+      label: "Institutions",
+      description: "Schools and universities using FACELOG",
+      color: "accent-blue"
     }
   ]
 
   return (
-    <section id="awards" className="relative py-20 bg-background overflow-hidden">
-      
-      {/* Elegant Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
-      
-
+    <section id="stats" className="relative py-24 bg-background overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-card/30 via-background to-background" />
 
       <div className="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        
         {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-3 mb-6">
             <div className="w-3 h-3 bg-accent-purple rounded-full animate-pulse" />
             <span className="text-sm font-semibold text-muted-foreground">
-              Recognition & Achievement
+              Trusted Worldwide
             </span>
             <div className="w-3 h-3 bg-accent-blue rounded-full animate-pulse" />
           </div>
           
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-6 text-foreground">
-            Awards & Recognition
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6 text-foreground">
+            FACELOG By The Numbers
           </h2>
           
           <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            Celebrated excellence in AI-powered film production
+            Real impact measured across educational institutions worldwide
           </p>
         </div>
 
-        {/* Awards Display */}
-        <div className="relative max-w-7xl mx-auto">
-          
-          {/* Awards Grid */}
-          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-            {awards.map((award, index) => (
-              <div
-                key={index}
-                className="group relative flex flex-col items-center text-center"
-                style={{ animationDelay: award.delay }}
+        {/* Stats Grid */}
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group"
               >
-                
-                {/* Award Pedestal */}
-                <div className="relative mb-6">
-                  
-                  {/* Floating Award Display */}
-                  <div className={`relative p-6 rounded-2xl border shadow-md transition-all duration-500 hover:scale-105 ${
-                    index === 2 || index === 3 ? 'bg-gray-800 border-gray-700' : 'bg-background border-border'
-                  }`}
-                       style={{ 
-                         boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
-                       }}>
-                    
-                    {/* Award Image */}
-                    <img 
-                      src={award.image}
-                      alt="Film Festival Award Laurel"
-                      className="w-full h-auto max-w-48 mx-auto"
-                      style={{
-                        filter: 'contrast(1.02) saturate(1.1)',
-                      }}
-                    />
-                    
-
+                <div className="bg-card clean-border rounded-2xl p-6 text-center hover:shadow-lg gentle-animation hover:-translate-y-1 h-full">
+                  {/* Icon */}
+                  <div className={`w-16 h-16 rounded-2xl bg-${stat.color}/10 flex items-center justify-center mx-auto mb-5`}>
+                    <stat.icon className={`w-8 h-8 text-${stat.color}`} />
                   </div>
                   
-                  {/* Floating Animation */}
-                  <div className="float-gentle absolute inset-0 pointer-events-none" />
+                  {/* Value */}
+                  <div className={`text-4xl font-black text-${stat.color} mb-2`}>
+                    {stat.value}
+                  </div>
+                  
+                  {/* Label */}
+                  <div className="text-lg font-bold text-foreground mb-2">
+                    {stat.label}
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="text-sm text-muted-foreground">
+                    {stat.description}
+                  </p>
                 </div>
-
-              </div>
+              </motion.div>
             ))}
           </div>
-
         </div>
 
-
+        {/* Trust Badges */}
+        <div className="mt-16 text-center">
+          <p className="text-sm text-muted-foreground mb-6">Built with industry-leading technologies</p>
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-3 h-3 bg-accent-blue rounded-full" />
+              <span className="font-medium">DeepFace AI</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-3 h-3 bg-accent-emerald rounded-full" />
+              <span className="font-medium">TensorFlow</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-3 h-3 bg-accent-purple rounded-full" />
+              <span className="font-medium">OpenCV</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="w-3 h-3 bg-accent-blue rounded-full" />
+              <span className="font-medium">Flask</span>
+            </div>
+          </div>
+        </div>
       </div>
-      
     </section>
   )
 }
